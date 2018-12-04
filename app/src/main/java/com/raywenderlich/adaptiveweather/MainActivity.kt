@@ -31,13 +31,17 @@
 
 package com.raywenderlich.adaptiveweather
 
+import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.support.v4.content.ContextCompat
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.AppCompatImageView
 import android.support.v7.widget.DividerItemDecoration
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
 import android.util.Log
 import android.view.View
+import com.google.android.flexbox.FlexboxLayout
 import org.json.JSONArray
 import org.json.JSONException
 import org.json.JSONObject
@@ -70,7 +74,7 @@ class MainActivity : AppCompatActivity() {
 
     locationAdapter = LocationAdapter(this, locations, object : LocationAdapter.OnItemClickListener {
       override fun onItemClick(location: Location) {
-        // TODO
+        loadForecast(location.forecast)
       }
     })
     recyclerView.adapter = locationAdapter
@@ -120,6 +124,27 @@ class MainActivity : AppCompatActivity() {
           e.printStackTrace()
         }
       }
+    }
+  }
+
+  private fun mapWeatherToDrawable(forecast: String): Drawable? {
+    var drawableId = 0
+    when (forecast) {
+      "sun" -> drawableId = R.drawable.ic_sun
+      "rain" -> drawableId = R.drawable.ic_rain
+      "fog" -> drawableId = R.drawable.ic_fog
+      "thunder" -> drawableId = R.drawable.ic_thunder
+      "cloud" -> drawableId = R.drawable.ic_cloud
+      "snow" -> drawableId = R.drawable.ic_snow
+    }
+    return ContextCompat.getDrawable(this, drawableId)
+  }
+
+  private fun loadForecast(forecast: List<String>) {
+    val forecastView = findViewById<View>(R.id.forecast) as FlexboxLayout
+    for (i in 0 until forecastView.childCount) {
+      val dayView = forecastView.getChildAt(i) as AppCompatImageView
+      dayView.setImageDrawable(mapWeatherToDrawable(forecast[i]))
     }
   }
 }
