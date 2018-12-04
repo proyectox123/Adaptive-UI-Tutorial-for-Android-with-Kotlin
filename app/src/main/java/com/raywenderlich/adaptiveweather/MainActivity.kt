@@ -54,11 +54,28 @@ class MainActivity : AppCompatActivity() {
   private val locations = ArrayList<Location>()
   private lateinit var locationAdapter: LocationAdapter
 
+  companion object {
+    private const val SELECTED_LOCATION_INDEX = "selectedLocationIndex"
+  }
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContentView(R.layout.activity_main)
 
     setupRecyclerView()
+
+    if (savedInstanceState != null) {
+      val index = savedInstanceState.getInt(SELECTED_LOCATION_INDEX)
+      if (index >= 0 && index < locations.size) {
+        locationAdapter.selectedLocationIndex = index
+        loadForecast(locations[index].forecast)
+      }
+    }
+  }
+
+  override fun onSaveInstanceState(outState: Bundle) {
+    super.onSaveInstanceState(outState)
+    outState.putInt(SELECTED_LOCATION_INDEX, locationAdapter.selectedLocationIndex)
   }
 
   private fun setupRecyclerView() {
